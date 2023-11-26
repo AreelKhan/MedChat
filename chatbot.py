@@ -13,7 +13,7 @@ from typing import List
 from classify import get_user_intent
 from utils import BrainTumourDiagnosisAgent
 
-COHERE_API_KEY = "xxgLc7lYofMMXtHhUcqM60iPlRWvjHQ4Syy6ttKz"
+COHERE_API_KEY = "K9mxtkR5NvHF6xPw5uVAPF6lqs9hWABddILV8156"
 #os.environ["COHERE_API_KEY"] = COHERE_API_KEY
 SYSTEM_MESSAGE_PROMPT = """
 
@@ -78,13 +78,19 @@ class MedicalChatBot:
 
         # first we check the user intent
         intent = get_user_intent(message)
+        print(intent)
 
-        if intent == "Diagnose Brain Tumour":
+        if intent[0] == "Diagnose Brain Tumour":
             # call brain diagnosis model
-            image = cv2.imread('test_images/4_brain.jpg')
+            image = cv2.imread('test_images/2_brain.jpg')
             test = BrainTumourDiagnosisAgent(image)
             result = test.diagnose()
-            message = message + f" According to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%"
+
+            ans = f"According to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%. Write a one-sentence message to the user confirming this information. Do not answer in more than one sentence."
+
+            return self.llm_chain.run(ans)
+
+        print(message)
 
         return self.llm_chain.run(message)
 
