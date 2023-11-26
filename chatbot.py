@@ -102,14 +102,16 @@ class MedicalChatBot:
             for event in response:
                 # Text
                 if event.event_type == "text-generation":
-                    answer.append(str(event.text))
+                    answer.append(str(event.text).join("\n"))
+                    answer.append("\n")
 
                 # Citations
                 if event.event_type == "citation-generation":
                     if not flag:
-                        answer.append("Citations: ")
+                        answer.append("Citations: \n")
                         flag = True
                     answer.append(str(event.citations))
+                    answer.append("\n")
 
             print(answer)
             try:

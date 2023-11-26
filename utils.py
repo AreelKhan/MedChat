@@ -26,4 +26,3 @@ class BrainTumourDiagnosisAgent:
         :return: The probability from 0 to 100 of having a brain tumour
         """
         return round(self.model.predict(np.array([self.image]), verbose=0)[0][0]*100)
-
