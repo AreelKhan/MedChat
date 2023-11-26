@@ -12,7 +12,7 @@ uploaded_files = st.sidebar.file_uploader("Upload image", type=['png', 'jpg', 'p
 if "messages" not in st.session_state:
     st.session_state.messages = [
         {
-            "role": "system",
+            "role": "user",
             "message": SYSTEM_MESSAGE_PROMPT,
         },
         {
@@ -50,20 +50,11 @@ if prompt := st.chat_input("Text here..."):
 
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
-        full_response = ""
-        full_response = st.session_state.bot.query(prompt)
-        # for response in co.chat(
-        #     message=prompt,
-        #     model=st.session_state["cohere_model"],
-        #     chat_history=[
-        #         {"role": m["role"], "message": m["message"]}
-        #         for m in st.session_state.messages
-        #     ],
-        #     stream=True
-        # ):
-        #     if response.event_type == 'text-generation':
-        #         full_response += (response.text)
-        #         message_placeholder.markdown(full_response + "▌")
+        full_response = st.session_state.bot.query(
+            prompt,
+            chat_history=st.session_state.messages,
+            message_placeholder=message_placeholder
+        )
         message_placeholder.markdown(full_response)
     st.session_state.messages.append({"role": "user", "message": prompt})
     st.session_state.messages.append({"role": "assistant", "message": full_response})
