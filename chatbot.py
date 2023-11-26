@@ -10,6 +10,15 @@ from langchain.memory import ConversationBufferMemory
 from typing import List
 from classify import get_user_intent
 from utils import BrainTumourDiagnosisAgent
+from doc import Documents
+from rag import Rag
+
+import json
+
+with open('source/docs.json') as f:
+    docs = json.load(f)
+
+DOCS = Documents(docs)
 
 COHERE_API_KEY = "K9mxtkR5NvHF6xPw5uVAPF6lqs9hWABddILV8156"
 #os.environ["COHERE_API_KEY"] = COHERE_API_KEY
@@ -86,6 +95,11 @@ class MedicalChatBot:
             ans = f"According to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%. Write a one-sentence message to the user confirming this information. Do not answer in more than one sentence."
 
             return self.llm_chain.run(ans)
+
+        if intent[0] == "Other":
+            rag = Rag(DOCS)
+            response =  rag.generate_response(message)
+            return response.text
 
         return self.llm_chain.run(message)
 
