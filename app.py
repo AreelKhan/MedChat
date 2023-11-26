@@ -28,7 +28,7 @@ if uploaded_files:
             st.sidebar.image(uploaded_file.getvalue())
 
 
-st.title("Cohere clone")
+st.title("MedChat")
 
 co = cohere.Client(COHERE_API_KEY)
 st.session_state.bot = MedicalChatBot(COHERE_API_KEY, uploaded_files)

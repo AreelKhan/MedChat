@@ -90,6 +90,9 @@ class MedicalChatBot:
 
             return self.llm_chain.run(ans)
 
+        #elif intent[0] == "General Medical Questions":
+
+
         print(message)
 
         return self.llm_chain.run(message)
