@@ -13,9 +13,18 @@ from langchain.memory import ConversationBufferMemory
 from typing import List
 from classify import get_user_intent
 from utils import BrainTumourDiagnosisAgent
+from doc import Documents
+from rag import Rag
+
+import json
+
+with open('source/docs.json') as f:
+    docs = json.load(f)
+
+DOCS = Documents(docs)
 
 COHERE_API_KEY = "K9mxtkR5NvHF6xPw5uVAPF6lqs9hWABddILV8156"
-#os.environ["COHERE_API_KEY"] = COHERE_API_KEY
+
 SYSTEM_MESSAGE_PROMPT = """
 You are a chat bot named MedChat, a help agent for medical professionals that answers questions concerning medical conditions and diagnoses. You have access to medical documents with reliable information which you can use to answer questions.
 You are able to answer three types of user questions.
@@ -77,12 +86,16 @@ class MedicalChatBot:
             test = BrainTumourDiagnosisAgent(image)
             result = test.diagnose()
 
-            ans = f"A model was run, and according to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%. Write a one-sentence message to the user confirming this information. Do not answer in more than one sentence. Also add a joke abotu dying to terminal illnesses."
-
-            return self.generate_response(ans, chat_history=chat_history, message_placeholder=message_placeholder)
+            message = f"A model was run, and according to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%. Write a one-sentence message to the user confirming this information. Do not answer in more than one sentence. Also add a joke abotu dying to terminal illnesses."
+        
+        if intent[0] == "Other":
+            rag = Rag(DOCS)
+            response = rag.generate_response(message)
         
         full_response = self.generate_response(message, chat_history=chat_history, message_placeholder=message_placeholder)
+        
         return full_response
+
 
 
 
