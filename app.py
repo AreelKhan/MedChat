@@ -1,5 +1,6 @@
 import streamlit as st
 import cohere
+from chatbot import MedicalChatBot
 
 
 COHERE_API_KEY = "leKGpK1kojv9JIOqduGjiJfevBphofbWMmfRyQrj"
@@ -16,6 +17,7 @@ if uploaded_files:
 st.title("Cohere clone")
 
 co = cohere.Client(COHERE_API_KEY)
+st.session_state.bot = MedicalChatBot()
 
 if "cohere_model" not in st.session_state:
     st.session_state["cohere_model"] = "command"
@@ -35,6 +37,7 @@ if prompt := st.chat_input("What is up?"):
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
+        full_response = st.session_state.bot.query(prompt)
         for response in co.chat(
             message=prompt,
             model=st.session_state["cohere_model"],
