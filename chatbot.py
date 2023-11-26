@@ -38,17 +38,29 @@ class MedicalChatBot:
     """
     def __init__(self, api_key) -> None:
 
-
         self.llm = ChatCohere(model="large", temperature=0.0, streaming=True)
 
-        self.chain = LLMChain(prompt=prompt, llm=llm)
+        template = """Question: {question}
 
-        self.prompt = AGENT_HERE.create_prompt(
-            system_message=SystemMessage(content=SYSTEM_MESSAGE_PROMPT),
-            extra_prompt_messages=[
-                MessagesPlaceholder(variable_name=MEMORY_KEY),
-            ],
-        )
+        Answer: Let's think step by step."""
+
+        self.prompt = PromptTemplate(template=template,
+                                input_variables=["question"],
+                                system_message=SystemMessage(content=SYSTEM_MESSAGE_PROMPT),
+                                extra_prompt_messages=[
+                                    MessagesPlaceholder(variable_name=MEMORY_KEY),
+                                ]
+                                )
+
+        self.llm_chain = LLMChain(prompt=self.prompt, llm=self.llm)
+        # self.chain = LLMChain(prompt=prompt, llm=llm)
+
+        # self.prompt = AGENT_HERE.create_prompt(
+        #     system_message=SystemMessage(content=SYSTEM_MESSAGE_PROMPT),
+        #     extra_prompt_messages=[
+        #         MessagesPlaceholder(variable_name=MEMORY_KEY),
+        #     ],
+        # )
 
         self.memory = ConversationBufferMemory(
             memory_key=MEMORY_KEY,
@@ -70,22 +82,9 @@ class MedicalChatBot:
             result = test.diagnose()
             message = message + f" According to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%"
 
-        template = """Question: {question}
-
-        Answer: Let's think step by step."""
-
-        prompt = PromptTemplate(template=template,
-                                input_variables=["question"],
-                                system_message=SystemMessage(content=SYSTEM_MESSAGE_PROMPT),
-                                extra_prompt_messages = [
-                                    MessagesPlaceholder(variable_name=MEMORY_KEY),
-                                ]
-        )
 
 
-        llm_chain = LLMChain(prompt=prompt, llm=self.llm)
-
-        llm_chain.run(message)
+        self.llm_chain.run(message)
 
 
 
