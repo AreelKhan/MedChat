@@ -1,28 +1,26 @@
-import cohere
+import cohere as co
 import os
 from cohere.responses.classify import Example
 
 COHERE_API_KEY = "leKGpK1kojv9JIOqduGjiJfevBphofbWMmfRyQrj"
 os.environ["COHERE_API_KEY"] = COHERE_API_KEY
+INTENTS = {'General QA': 0, 'Diagnose Brain Tumour': 1, 'Blood Work': 2}
 
-examples=[
-  Example("Make diagnosis", "Spam"),
-  Example("'Hello, open to this?'", "Spam"),
-  Example("I need help please wire me $1000 right now", "Spam"),
-  Example("Nice to know you ;)", "Spam"),
-  Example("Please help me?", "Spam"),
-  Example("Your parcel will be delivered today", "Not spam"),
-  Example("Review changes to our Terms and Conditions", "Not spam"),
-  Example("Weekly sync notes", "Not spam"),
-  Example("'Re: Follow up from today's meeting'", "Not spam"),
-  Example("Pre-read for tomorrow", "Not spam"),
-]
-inputs=[
-  "Confirm your email address",
-  "hey i need u to send some $",
-]
-response = co.classify(
-  inputs=inputs,
-  examples=examples,
-)
-print(response)
+def get_user_intent(user_message):
+
+  examples = [
+    Example("I need a tumour diagnoses on this brain scan.", "Diagnose Brain Tumour"),
+    Example("Can you make a diagnoses for this brain MRI?", "Diagnose Brain Tumour"),
+    Example("What is the cancer likelihood for this MRI scan of a patient's brain?", "Diagnose Brain Tumour"),
+    Example("What is the probability of positive tumour diagnosis for this brain MRI.", "Diagnose Brain Tumour"),
+  ]
+
+  # Sends the classification request to the Cohere model
+  user_intent = co.classify(
+    model='large',
+    inputs=[user_message],
+    examples=examples
+  )
+
+  return user_intent.classifications[0].prediction
+
