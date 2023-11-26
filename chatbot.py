@@ -1,4 +1,5 @@
 import os
+import cv2
 
 from langchain.schema import SystemMessage
 from langchain.prompts import MessagesPlaceholder
@@ -40,6 +41,8 @@ class MedicalChatBot:
 
         self.llm = ChatCohere(model="large", temperature=0.0, streaming=True)
 
+        self.chain = LLMChain(prompt=prompt, llm=llm)
+
         self.prompt = AGENT_HERE.create_prompt(
             system_message=SystemMessage(content=SYSTEM_MESSAGE_PROMPT),
             extra_prompt_messages=[
@@ -63,8 +66,24 @@ class MedicalChatBot:
 
         if intent == "Diagnose Brain Tumour":
             # call brain diagnosis model
+            image = cv2.imread('test_images/4_brain.jpg')
             test = BrainTumourDiagnosisAgent(image)
-            test.diagnose()
+            result = test.diagnose()
+            message = message + f" According to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%"
+
+        template = """Question: {question}
+
+        Answer: Let's think step by step."""
+
+        prompt = PromptTemplate(template=template, input_variables=["question"])
+
+        llm_chain = LLMChain(prompt=prompt, llm=self.llm)
+
+        llm_chain.run(message)
+
+
+
+
 
 
 
