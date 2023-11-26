@@ -10,6 +10,7 @@ uploaded_files = st.sidebar.file_uploader("Upload image", type=['png', 'jpg', 'p
 
 if uploaded_files:
     for uploaded_file in uploaded_files:
+        print(uploaded_file)
         if uploaded_file.type.startswith('image'):
             st.sidebar.image(uploaded_file.getvalue())
 
@@ -17,7 +18,7 @@ if uploaded_files:
 st.title("Cohere clone")
 
 co = cohere.Client(COHERE_API_KEY)
-st.session_state.bot = MedicalChatBot()
+st.session_state.bot = MedicalChatBot(uploaded_files)
 
 if "cohere_model" not in st.session_state:
     st.session_state["cohere_model"] = "command"

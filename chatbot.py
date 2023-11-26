@@ -12,7 +12,6 @@ from langchain.memory import ConversationBufferMemory
 from typing import List
 from classify import get_user_intent
 from utils import BrainTumourDiagnosisAgent
-from app import uploaded_files
 
 COHERE_API_KEY = "leKGpK1kojv9JIOqduGjiJfevBphofbWMmfRyQrj"
 #os.environ["COHERE_API_KEY"] = COHERE_API_KEY
@@ -36,7 +35,8 @@ class MedicalChatBot:
     """
     Master Agent.
     """
-    def __init__(self, api_key) -> None:
+    def __init__(self, api_key, uploaded_files) -> None:
+        self.uploaded_files = uploaded_files
 
         self.llm = ChatCohere(model="large", temperature=0.0, streaming=True)
 
@@ -69,6 +69,9 @@ class MedicalChatBot:
             output_key="output",
         )
 
+    def get_uploaded_file(self, uploaded_files):
+        if uploaded_files:
+            pass
 
     def query(self, message):
 
