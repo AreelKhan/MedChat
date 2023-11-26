@@ -71,7 +71,7 @@ class MedicalChatBot:
 
     def get_uploaded_file(self, uploaded_files):
         if uploaded_files:
-            pass
+            print(uploaded_files)
 
     def query(self, message):
 
@@ -84,8 +84,6 @@ class MedicalChatBot:
             test = BrainTumourDiagnosisAgent(image)
             result = test.diagnose()
             message = message + f" According to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%"
-
-
 
         self.llm_chain.run(message)
 

@@ -18,7 +18,7 @@ if uploaded_files:
 st.title("Cohere clone")
 
 co = cohere.Client(COHERE_API_KEY)
-st.session_state.bot = MedicalChatBot(uploaded_files)
+st.session_state.bot = MedicalChatBot(COHERE_API_KEY, uploaded_files)
 
 if "cohere_model" not in st.session_state:
     st.session_state["cohere_model"] = "command"

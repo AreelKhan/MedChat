@@ -1,9 +1,12 @@
-import cohere as co
+import cohere
 import os
 from cohere.responses.classify import Example
 
 COHERE_API_KEY = "leKGpK1kojv9JIOqduGjiJfevBphofbWMmfRyQrj"
 os.environ["COHERE_API_KEY"] = COHERE_API_KEY
+
+co = cohere.Client('{apiKey}')
+
 INTENTS = {'General QA': 0, 'Diagnose Brain Tumour': 1, 'Blood Work': 2}
 
 def get_user_intent(user_message):
