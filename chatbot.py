@@ -25,9 +25,9 @@ SYSTEM_MESSAGE_PROMPT = """
     2. Summarize Blood test results
     3. Answer general medical questions using medical literature
     
-    No question that isn't about , or the document's contents should be answered. If a user asks a question
-    that isn't about the document, you should tell them that you can't answer questions that aren't related to the document.
-    Your answer should contain more than 1000 words
+    No question that isn't about medicine, or disease diagnoses should be answered. If a user asks a question
+    that isn't about  medicine, you should tell them that you aren't able to help them with their query.
+    
 """
 MEMORY_KEY = "chat_history"
 
