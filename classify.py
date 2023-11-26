@@ -17,6 +17,7 @@ examples=[
   Example("'Re: Follow up from today's meeting'", "Not spam"),
   Example("Pre-read for tomorrow", "Not spam"),
 ]
+
 inputs=[
   "Confirm your email address",
   "hey i need u to send some $",
