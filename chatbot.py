@@ -1,15 +1,7 @@
-import os
 import cohere
-import cv2
 
 import numpy as np
 from PIL import Image
-from langchain.schema import SystemMessage
-from langchain.prompts import MessagesPlaceholder
-from langchain.chat_models import ChatCohere
-from langchain.chains.llm import LLMChain
-from langchain.prompts import PromptTemplate
-from langchain.memory import ConversationBufferMemory
 from typing import List
 from classify import get_user_intent
 from utils import BrainTumourDiagnosisAgent
@@ -82,6 +74,11 @@ class MedicalChatBot:
 
         if intent[0] == "Diagnose Brain Tumour":
             # call brain diagnosis model
+            running_model_message = ""
+            for letter in "Running brain tumour detection model...":
+                running_model_message += letter
+                message_placeholder.markdown(running_model_message + "▌")
+
             image = self.get_image_file()
             test = BrainTumourDiagnosisAgent(image)
             result = test.diagnose()
@@ -94,8 +91,8 @@ class MedicalChatBot:
         
         if intent[0] == "Other":
             rag = Rag(DOCS)
-            response =  rag.generate_response(message)
-
+            response = rag.generate_response(message)
+            response = ""
             answer = ""
 
             flag = False
@@ -114,17 +111,3 @@ class MedicalChatBot:
         
         else:
             return "Something went wrong"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
