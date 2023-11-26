@@ -13,7 +13,7 @@ from typing import List
 from classify import get_user_intent
 from utils import BrainTumourDiagnosisAgent
 
-COHERE_API_KEY = "leKGpK1kojv9JIOqduGjiJfevBphofbWMmfRyQrj"
+COHERE_API_KEY = "xxgLc7lYofMMXtHhUcqM60iPlRWvjHQ4Syy6ttKz"
 #os.environ["COHERE_API_KEY"] = COHERE_API_KEY
 SYSTEM_MESSAGE_PROMPT = """
 

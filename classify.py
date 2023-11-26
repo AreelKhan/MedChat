@@ -2,7 +2,7 @@ import cohere
 import os
 from cohere.responses.classify import Example
 
-COHERE_API_KEY = "leKGpK1kojv9JIOqduGjiJfevBphofbWMmfRyQrj"
+COHERE_API_KEY = "xxgLc7lYofMMXtHhUcqM60iPlRWvjHQ4Syy6ttKz"
 os.environ["COHERE_API_KEY"] = COHERE_API_KEY
 
 co = cohere.Client('{apiKey}')
