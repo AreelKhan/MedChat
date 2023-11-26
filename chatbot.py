@@ -78,7 +78,6 @@ class MedicalChatBot:
 
         # first we check the user intent
         intent = get_user_intent(message)
-        print(intent)
 
         if intent[0] == "Diagnose Brain Tumour":
             # call brain diagnosis model
@@ -89,8 +88,6 @@ class MedicalChatBot:
             ans = f"According to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%. Write a one-sentence message to the user confirming this information. Do not answer in more than one sentence."
 
             return self.llm_chain.run(ans)
-
-        print(message)
 
         return self.llm_chain.run(message)
 
