@@ -2,6 +2,9 @@
 from doc import Documents
 import uuid
 from typing import List, Dict
+import cohere as co
+
+COHERE_API_KEY = "K9mxtkR5NvHF6xPw5uVAPF6lqs9hWABddILV8156"
 
 class Rag:
     """

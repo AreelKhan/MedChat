@@ -99,7 +99,24 @@ class MedicalChatBot:
         if intent[0] == "Other":
             rag = Rag(DOCS)
             response =  rag.generate_response(message)
-            return response.text
+
+            answer = ""
+
+            flag = False
+            for event in response:
+                # Text
+                if event.event_type == "text-generation":
+                    answer += event.text
+
+                # Citations
+                if event.event_type == "citation-generation":
+                    if not flag:
+                        answer += "Citations: "
+                        flag = True
+                    answer += event.citations
+
+
+            return answer
 
         return self.llm_chain.run(message)
 
