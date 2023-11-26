@@ -29,8 +29,7 @@ SYSTEM_MESSAGE_PROMPT = """
 You are a chat bot named MedChat, a help agent for medical professionals that answers questions concerning medical conditions and diagnoses. You have access to medical documents with reliable information which you can use to answer questions.
 You are able to answer three types of user questions.
 1. Diagnose brain MRI images
-2. Summarize Blood test results
-3. Answer general medical questions using medical literature
+2. Answer general medical questions using medical literature
 
 Any question that isn't about medicine, or disease diagnoses should not be answered. If a user asks a question that isn't about medicine, you should tell them that you aren't able to help them with their query. Keep your answers concise, and shorter than 5 sentences.
 """
@@ -102,11 +101,10 @@ class MedicalChatBot:
             for event in response:
                 # Text
                 if event.event_type == "text-generation":
-                    answer.append(str(event.text).join("\n"))
-                    answer.append("\n")
+                    answer.append(str(event.text))
 
                 # Citations
-                if event.event_type == "citation-generation":
+                elif event.event_type == "citation-generation":
                     if not flag:
                         answer.append("Citations: \n")
                         flag = True
