@@ -13,7 +13,6 @@ if uploaded_files:
             st.sidebar.image(uploaded_file.getvalue())
 
 
-
 st.title("Cohere clone")
 
 co = cohere.Client(COHERE_API_KEY)
