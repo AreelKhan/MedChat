@@ -27,7 +27,3 @@ class BrainTumourDiagnosisAgent:
         """
         return round(self.model.predict(np.array([self.image]), verbose=0)[0][0]*100)
 
-
-ex_img = cv2.imread('test_images/4_brain.jpg')
-test = BrainTumourDiagnosisAgent(ex_img)
-test.diagnose()
