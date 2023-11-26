@@ -1,12 +1,25 @@
 import streamlit as st
 import cohere
-from chatbot import MedicalChatBot
+from chatbot import MedicalChatBot, SYSTEM_MESSAGE_PROMPT
 
 
 COHERE_API_KEY = "xxgLc7lYofMMXtHhUcqM60iPlRWvjHQ4Syy6ttKz"
 CREATIVITY = 0
 
 uploaded_files = st.sidebar.file_uploader("Upload image", type=['png', 'jpg', 'pdf'], accept_multiple_files=True)
+
+# Initialize Chat History
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {
+            "role": "system",
+            "content": SYSTEM_MESSAGE_PROMPT,
+        },
+        {
+            "role": "assistant",
+            "content": "Hello, I'm MedChat, a chatbot built to help you interpret medical literature and support in disease diagnosis."
+        },
+    ]
 
 if uploaded_files:
     for uploaded_file in uploaded_files:
