@@ -23,7 +23,6 @@ if "messages" not in st.session_state:
 
 if uploaded_files:
     for uploaded_file in uploaded_files:
-        print(uploaded_file)
         if uploaded_file.type.startswith('image'):
             st.sidebar.image(uploaded_file.getvalue())
 

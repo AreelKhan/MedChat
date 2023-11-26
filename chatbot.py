@@ -2,6 +2,8 @@ import os
 import cohere
 import cv2
 
+import numpy as np
+from PIL import Image
 from langchain.schema import SystemMessage
 from langchain.prompts import MessagesPlaceholder
 from langchain.chat_models import ChatCohere
@@ -32,28 +34,23 @@ class MedicalChatBot:
     def __init__(self, api_key, uploaded_files) -> None:
         self.api_key = api_key
         self.uploaded_files = uploaded_files
-              
+
         self.co = cohere.Client(COHERE_API_KEY)
 
-    def get_uploaded_file(self, uploaded_files):
-        if uploaded_files:
-            print(uploaded_files)
-
-    def query(self, message, chat_history, message_placeholder):
-
-        # first we check the user intent
-        intent = get_user_intent(message)
-
-        if intent[0] == "Diagnose Brain Tumour":
-            # call brain diagnosis model
-            image = cv2.imread('test_images/2_brain.jpg')
-            test = BrainTumourDiagnosisAgent(image)
-            result = test.diagnose()
-
-            ans = f"According to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%. Write a one-sentence message to the user confirming this information. Do not answer in more than one sentence."
-
-            return self.llm_chain.run(ans)
-        
+    def read_image(self, file):
+        # Read the image file into a NumPy array
+        image = Image.open(file)
+        image_array = np.array(image)
+        return image_array
+ 
+    def get_image_file(self):
+        if self.uploaded_files:
+            file = self.uploaded_files[-1]
+            if file.type.startswith("image"):
+                return self.read_image(file)
+        return None
+    
+    def generate_response(self, message, chat_history, message_placeholder):
         full_response = ""
         for response in self.co.chat(
             message=message,
@@ -67,6 +64,24 @@ class MedicalChatBot:
             if response.event_type == 'text-generation':
                 full_response += (response.text)
                 message_placeholder.markdown(full_response + "▌")
+        return full_response
+
+    def query(self, message, chat_history, message_placeholder):
+
+        # first we check the user intent
+        intent = get_user_intent(message)
+
+        if intent[0] == "Diagnose Brain Tumour":
+            # call brain diagnosis model
+            image = self.get_image_file()
+            test = BrainTumourDiagnosisAgent(image)
+            result = test.diagnose()
+
+            ans = f"A model was run, and according to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%. Write a one-sentence message to the user confirming this information. Do not answer in more than one sentence. Also add a joke abotu dying to terminal illnesses."
+
+            return self.generate_response(ans, chat_history=chat_history, message_placeholder=message_placeholder)
+        
+        full_response = self.generate_response(message, chat_history=chat_history, message_placeholder=message_placeholder)
         return full_response
 
 
