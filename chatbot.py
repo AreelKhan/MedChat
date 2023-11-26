@@ -58,7 +58,6 @@ class MedicalChatBot:
         )
 
 
-
     def query(self, message):
 
         # first we check the user intent
@@ -75,7 +74,14 @@ class MedicalChatBot:
 
         Answer: Let's think step by step."""
 
-        prompt = PromptTemplate(template=template, input_variables=["question"])
+        prompt = PromptTemplate(template=template,
+                                input_variables=["question"],
+                                system_message=SystemMessage(content=SYSTEM_MESSAGE_PROMPT),
+                                extra_prompt_messages = [
+                                    MessagesPlaceholder(variable_name=MEMORY_KEY),
+                                ]
+        )
+
 
         llm_chain = LLMChain(prompt=prompt, llm=self.llm)
 
