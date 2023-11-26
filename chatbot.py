@@ -86,7 +86,7 @@ class MedicalChatBot:
             test = BrainTumourDiagnosisAgent(image)
             result = test.diagnose()
 
-            message = f"A model was run, and according to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%. Write a one-sentence message to the user confirming this information. Do not answer in more than one sentence. Also add a joke abotu dying to terminal illnesses."
+            message = f"According to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%. Write a one-sentence message to the user confirming this information. Give the answer as a percent. Do not answer in more than one sentence."
         
             full_response = self.generate_response(message, chat_history=chat_history, message_placeholder=message_placeholder)
         
@@ -96,21 +96,26 @@ class MedicalChatBot:
             rag = Rag(DOCS)
             response =  rag.generate_response(message)
 
-            answer = ""
+            answer = []
 
             flag = False
             for event in response:
                 # Text
                 if event.event_type == "text-generation":
-                    answer += event.text
+                    answer.append(str(event.text))
 
                 # Citations
                 if event.event_type == "citation-generation":
                     if not flag:
-                        answer += "Citations: "
+                        answer.append("Citations: ")
                         flag = True
-                    answer += event.citations
-            return answer
+                    answer.append(str(event.citations))
+
+            print(answer)
+            try:
+                return "".join(answer)
+            except:
+                return "Something went wrong"
         
         else:
             return "Something went wrong"

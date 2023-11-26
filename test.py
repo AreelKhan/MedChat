@@ -150,18 +150,18 @@ class App:
 
             print(f"\n{'-'*100}\n")
 
-# read docs.json as a list of dictionaries
-import json
-with open('source/docs.json') as f:
-    docs = json.load(f)
-
-documents = Documents(docs)
-
-# Create an instance of the Chatbot class with the Documents instance
-chatbot = Chatbot(documents)
-
-# Create an instance of the App class with the Chatbot instance
-app = App(chatbot)
-
-# Run the chatbot
-app.run()
+# # read docs.json as a list of dictionaries
+# import json
+# with open('source/docs.json') as f:
+#     docs = json.load(f)
+#
+# documents = Documents(docs)
+#
+# # Create an instance of the Chatbot class with the Documents instance
+# chatbot = Chatbot(documents)
+#
+# # Create an instance of the App class with the Chatbot instance
+# app = App(chatbot)
+#
+# # Run the chatbot
+# app.run()
