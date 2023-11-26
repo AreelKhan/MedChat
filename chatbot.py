@@ -88,13 +88,32 @@ class MedicalChatBot:
 
             message = f"A model was run, and according to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%. Write a one-sentence message to the user confirming this information. Do not answer in more than one sentence. Also add a joke abotu dying to terminal illnesses."
         
+            full_response = self.generate_response(message, chat_history=chat_history, message_placeholder=message_placeholder)
+        
+            return full_response
+        
         if intent[0] == "Other":
             rag = Rag(DOCS)
-            response = rag.generate_response(message)
+            response =  rag.generate_response(message)
+
+            answer = ""
+
+            flag = False
+            for event in response:
+                # Text
+                if event.event_type == "text-generation":
+                    answer += event.text
+
+                # Citations
+                if event.event_type == "citation-generation":
+                    if not flag:
+                        answer += "Citations: "
+                        flag = True
+                    answer += event.citations
+            return answer
         
-        full_response = self.generate_response(message, chat_history=chat_history, message_placeholder=message_placeholder)
-        
-        return full_response
+        else:
+            return "Something went wrong"
 
 
 
