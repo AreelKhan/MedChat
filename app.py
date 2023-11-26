@@ -13,11 +13,11 @@ if "messages" not in st.session_state:
     st.session_state.messages = [
         {
             "role": "system",
-            "content": SYSTEM_MESSAGE_PROMPT,
+            "message": SYSTEM_MESSAGE_PROMPT,
         },
         {
             "role": "assistant",
-            "content": "Hello, I'm MedChat, a chatbot built to help you interpret medical literature and support in disease diagnosis."
+            "message": "Hello, I'm MedChat, a chatbot built to help you interpret medical literature and support in disease diagnosis."
         },
     ]
 
@@ -52,18 +52,18 @@ if prompt := st.chat_input("What is up?"):
         message_placeholder = st.empty()
         full_response = ""
         full_response = st.session_state.bot.query(prompt)
-        for response in co.chat(
-            message=prompt,
-            model=st.session_state["cohere_model"],
-            chat_history=[
-                {"role": m["role"], "message": m["message"]}
-                for m in st.session_state.messages
-            ],
-            stream=True
-        ):
-            if response.event_type == 'text-generation':
-                full_response += (response.text)
-                message_placeholder.markdown(full_response + "▌")
+        # for response in co.chat(
+        #     message=prompt,
+        #     model=st.session_state["cohere_model"],
+        #     chat_history=[
+        #         {"role": m["role"], "message": m["message"]}
+        #         for m in st.session_state.messages
+        #     ],
+        #     stream=True
+        # ):
+        #     if response.event_type == 'text-generation':
+        #         full_response += (response.text)
+        #         message_placeholder.markdown(full_response + "▌")
         message_placeholder.markdown(full_response)
     st.session_state.messages.append({"role": "user", "message": prompt})
     st.session_state.messages.append({"role": "assistant", "message": full_response})
