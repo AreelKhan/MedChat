@@ -36,6 +36,7 @@ class MedicalChatBot:
     Master Agent.
     """
     def __init__(self, api_key, uploaded_files) -> None:
+        self.api_key = api_key
         self.uploaded_files = uploaded_files
 
         self.llm = ChatCohere(model="large", temperature=0.0, streaming=True)
@@ -85,7 +86,7 @@ class MedicalChatBot:
             result = test.diagnose()
             message = message + f" According to the disease diagnosis models, the probability of a positive tumour diagnosis is {result}%"
 
-        self.llm_chain.run(message)
+        return self.llm_chain.run(message)
 
 
 
