@@ -4,10 +4,8 @@ import cv2
 from langchain.schema import SystemMessage
 from langchain.prompts import MessagesPlaceholder
 from langchain.chat_models import ChatCohere
-from langchain.docstore.document import Document
 from langchain.chains.llm import LLMChain
 from langchain.prompts import PromptTemplate
-from langchain.chains.combine_documents.stuff import StuffDocumentsChain
 from langchain.memory import ConversationBufferMemory
 from typing import List
 from classify import get_user_intent
