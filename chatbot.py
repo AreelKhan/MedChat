@@ -27,7 +27,7 @@ COHERE_API_KEY = "K9mxtkR5NvHF6xPw5uVAPF6lqs9hWABddILV8156"
 
 SYSTEM_MESSAGE_PROMPT = """
 You are a chat bot named MedChat, a help agent for medical professionals that answers questions concerning medical conditions and diagnoses. You have access to medical documents with reliable information which you can use to answer questions.
-You are able to answer three types of user questions.
+You are able to answer two types of user questions.
 1. Diagnose brain MRI images
 2. Answer general medical questions using medical literature
 
