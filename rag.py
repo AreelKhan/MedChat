@@ -27,7 +27,6 @@ class Rag:
         self.docs = docs
         self.conversation_id = str(uuid.uuid4())
 
-
     def generate_response(self, message: str):
         """
         Generates a response to the user's message.
