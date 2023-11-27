@@ -5,25 +5,32 @@ from cohere.responses.classify import Example
 COHERE_API_KEY = "xxgLc7lYofMMXtHhUcqM60iPlRWvjHQ4Syy6ttKz"
 os.environ["COHERE_API_KEY"] = COHERE_API_KEY
 
-examples=[
-  Example("Make diagnosis", "Spam"),
-  Example("'Hello, open to this?'", "Spam"),
-  Example("I need help please wire me $1000 right now", "Spam"),
-  Example("Nice to know you ;)", "Spam"),
-  Example("Please help me?", "Spam"),
-  Example("Your parcel will be delivered today", "Not spam"),
-  Example("Review changes to our Terms and Conditions", "Not spam"),
-  Example("Weekly sync notes", "Not spam"),
-  Example("'Re: Follow up from today's meeting'", "Not spam"),
-  Example("Pre-read for tomorrow", "Not spam"),
-]
+co = cohere.Client(COHERE_API_KEY)
 
-inputs=[
-  "Confirm your email address",
-  "hey i need u to send some $",
-]
-response = co.classify(
-  inputs=inputs,
-  examples=examples,
-)
-print(response)
+INTENTS = {'General QA': 0, 'Diagnose Brain Tumour': 1, 'Blood Work': 2}
+
+BRAIN_TUMOUR = "Diagnose Brain Tumour"
+OTHER = "Other"
+
+def get_user_intent(user_message):
+
+  examples = [
+    Example("I need a tumour diagnoses on this brain scan.", BRAIN_TUMOUR),
+    Example("Can you make a diagnoses for this brain MRI?", BRAIN_TUMOUR),
+    Example("What is the cancer likelihood for this MRI scan of a patient's brain?", BRAIN_TUMOUR),
+    Example("What is the probability of positive tumour diagnosis for this brain MRI.", BRAIN_TUMOUR),
+    Example("I uploaded a brain scan, can you analyze and interpret it for me?", BRAIN_TUMOUR),
+    Example("What is the survival rate for stage 2 lung cancer", OTHER),
+    Example("What is the survival rate for brain tumour", OTHER),
+    Example("How is indigestion cured?", OTHER),
+    Example("What are the symptoms of diabetes?", OTHER),
+  ]
+
+  # Sends the classification request to the Cohere model
+  user_intent = co.classify(
+    model='large',
+    inputs=[user_message],
+    examples=examples
+  )
+
+  return user_intent.classifications[0].predictions
