@@ -4,8 +4,15 @@ import uuid
 from typing import List, Dict
 import cohere
 
-COHERE_API_KEY = "K9mxtkR5NvHF6xPw5uVAPF6lqs9hWABddILV8156"
-co = cohere.Client('K9mxtkR5NvHF6xPw5uVAPF6lqs9hWABddILV8156')
+# get cohere api key from .env
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
+co = cohere.Client(COHERE_API_KEY)
+
 class Rag:
     """
     A class representing a chatbot.
@@ -27,7 +34,16 @@ class Rag:
         self.docs = docs
         self.conversation_id = str(uuid.uuid4())
 
-    def generate_response(self, message: str):
+    def search_query(self, message: str):
+        
+        
+        # If there are search queries, retrieve documents and respond
+        if response.search_queries:
+            return response
+        else:
+            return False, response
+        
+    def generate_response(self, message: str, doc: Documents, response):
         """
         Generates a response to the user's message.
 
@@ -42,17 +58,11 @@ class Rag:
 
         """
         # Generate search queries (if any)
-        response = co.chat(message=message, search_queries_only=True)
         
-        # If there are search queries, retrieve documents and respond
         if response.search_queries:
-            print("Retrieving information...")
-
-            documents = self.retrieve_docs(response)
-
             response = co.chat(
                 message=message,
-                documents=documents,
+                documents=doc,
                 conversation_id=self.conversation_id,
                 stream=True,
             )

@@ -2,9 +2,13 @@ import cohere
 import os
 from cohere.responses.classify import Example
 
-COHERE_API_KEY = "xxgLc7lYofMMXtHhUcqM60iPlRWvjHQ4Syy6ttKz"
-os.environ["COHERE_API_KEY"] = COHERE_API_KEY
+# get cohere api key from .env
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 co = cohere.Client(COHERE_API_KEY)
 
 INTENTS = {'General QA': 0, 'Diagnose Brain Tumour': 1, 'Blood Work': 2}

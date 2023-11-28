@@ -5,10 +5,17 @@ import json
 import uuid
 import requests
 from typing import List, Dict
+import validators
 from unstructured.partition.html import partition_html
 from unstructured.chunking.title import chunk_by_title
+# get cohere api key from .env
+from dotenv import load_dotenv
+import os
 
-co = cohere.Client("xxgLc7lYofMMXtHhUcqM60iPlRWvjHQ4Syy6ttKz")
+load_dotenv()
+
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
+co = cohere.Client(COHERE_API_KEY)
 
 headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'}
 
@@ -53,7 +60,10 @@ class Documents:
         print("Loading documents...")
 
         for source in self.sources:
-            elements = partition_html("./source/htmls/{}.html".format(source['title']))
+            try:
+                elements = partition_html(url=source["url"], headers=headers)
+            except:
+                continue
             chunks = chunk_by_title(elements)
             for chunk in chunks:
                 self.docs.append(

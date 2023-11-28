@@ -2,8 +2,13 @@ import streamlit as st
 import cohere
 from chatbot import MedicalChatBot, SYSTEM_MESSAGE_PROMPT
 
+# get cohere api key from .env
+from dotenv import load_dotenv
+import os
 
-COHERE_API_KEY = "xxgLc7lYofMMXtHhUcqM60iPlRWvjHQ4Syy6ttKz"
+load_dotenv()
+
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 CREATIVITY = 0
 
 uploaded_files = st.sidebar.file_uploader("Upload image", type=['png', 'jpg', 'pdf'], accept_multiple_files=True)
@@ -26,7 +31,6 @@ if uploaded_files:
         if uploaded_file.type.startswith('image'):
             st.sidebar.image(uploaded_file.getvalue())
 
-
 st.title("MedChat")
 
 co = cohere.Client(COHERE_API_KEY)
@@ -41,7 +45,6 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["message"])
-
 
 if prompt := st.chat_input("Text here..."):
     with st.chat_message("user"):

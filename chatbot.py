@@ -1,29 +1,23 @@
-import os
 import cohere
-import cv2
-
 import numpy as np
 from PIL import Image
-from langchain.schema import SystemMessage
-from langchain.prompts import MessagesPlaceholder
-from langchain.chat_models import ChatCohere
-from langchain.chains.llm import LLMChain
-from langchain.prompts import PromptTemplate
-from langchain.memory import ConversationBufferMemory
-from typing import List
 from classify import get_user_intent
 from utils import BrainTumourDiagnosisAgent
 from doc import Documents
+from typing import List
 from rag import Rag
+import pickle
 
-import json
+# get cohere api key from .env
+from dotenv import load_dotenv
+import os
 
-with open('source/docs.json') as f:
-    docs = json.load(f)
+load_dotenv()
 
-DOCS = Documents(docs)
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
+co = cohere.Client(COHERE_API_KEY)
 
-COHERE_API_KEY = "K9mxtkR5NvHF6xPw5uVAPF6lqs9hWABddILV8156"
+DOCS = pickle.load(open("doc.pkl", "rb"))
 
 SYSTEM_MESSAGE_PROMPT = """
 You are a chat bot named MedChat, a help agent for medical professionals that answers questions concerning medical conditions and diagnoses. You have access to medical documents with reliable information which you can use to answer questions.
@@ -33,7 +27,16 @@ You are able to answer three types of user questions.
 
 Any question that isn't about medicine, or disease diagnoses should not be answered. If a user asks a question that isn't about medicine, you should tell them that you aren't able to help them with their query. Keep your answers concise, and shorter than 5 sentences.
 """
+
 MEMORY_KEY = "chat_history"
+
+# get cohere api key from .env
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 
 class MedicalChatBot:
     """
@@ -74,6 +77,17 @@ class MedicalChatBot:
                 message_placeholder.markdown(full_response + "▌")
         return full_response
 
+    def return_selected_docs(self, docs: Documents, cited_docs: List[str]) -> None:
+        full_response = ""
+        for doc in cited_docs:
+            index = int(doc[4:]) - 1
+            citation = docs[index]
+            full_response += f"Source Title: {citation['title']}\n"
+            full_response += "\n"
+            full_response += f"Source URL: {citation['url']}\n"
+            full_response += "\n"
+        return full_response
+
     def query(self, message, chat_history, message_placeholder):
 
         # first we check the user intent
@@ -93,43 +107,31 @@ class MedicalChatBot:
         
         if intent[0] == "Other":
             rag = Rag(DOCS)
-            response =  rag.generate_response(message)
-
-            answer = []
-
+            response = co.chat(message=message, search_queries_only=True)
+            doc = rag.retrieve_docs(response)
+            response = rag.generate_response(message, doc, response)
+            full_response = ""
             flag = False
+
             for event in response:
-                # Text
                 if event.event_type == "text-generation":
-                    answer.append(str(event.text))
+                    full_response += (event.text)
+                    message_placeholder.markdown(full_response + "▌")
 
                 # Citations
                 elif event.event_type == "citation-generation":
                     if not flag:
-                        answer.append("Citations: \n")
+                        full_response += '\n'
+                        full_response += '\nCitations:\n'
+                        full_response += '\n'
                         flag = True
-                    answer.append(str(event.citations))
-                    answer.append("\n")
-
-            print(answer)
-            try:
-                return "".join(answer)
-            except:
-                return "Something went wrong"
-        
+                    for citation in event.citations:
+                        full_response += self.return_selected_docs(doc, citation['document_ids'])
+                        full_response += '\n'
+                        full_response += f"Start Index: {citation['start']}, End Index: {citation['end']}, Cited Text: {citation['text']}\n"
+                        full_response += '\n'
+                        
+                    message_placeholder.markdown(full_response + "▌")
+            return full_response
         else:
             return "Something went wrong"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
